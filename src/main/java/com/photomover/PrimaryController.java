@@ -1,18 +1,22 @@
 package com.photomover;
 
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.beans.value.ChangeListener;
-
 
 public class PrimaryController {
 
@@ -21,6 +25,15 @@ public class PrimaryController {
 
     @FXML
     private TextField destinationTextField;
+
+    @FXML
+    private TextField optionsTextField;
+
+    @FXML
+    private Button optionsBrowseButton;
+
+    @FXML
+    private CheckBox moveFilesCheckbox;
 
     @FXML
     private TextField pathpattern; // Added for the path pattern TextField
@@ -35,6 +48,12 @@ public class PrimaryController {
     private Label renamePatternPreview;
 
     @FXML
+    private RadioButton sameButton; // Added for the radio button
+
+    @FXML
+    private RadioButton everythingButton; // Added for the radio button
+
+    @FXML
     private void browseSourceFolder() {
         // Open the folder selection dialog for Folder 1
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -46,7 +65,8 @@ public class PrimaryController {
         // Show the folder selection dialog
         java.io.File selectedFolder = directoryChooser.showDialog(stage);
 
-        // Update the sourceTextField with the selected folder path (if a folder was selected)
+        // Update the sourceTextField with the selected folder path (if a folder was
+        // selected)
         if (selectedFolder != null) {
             sourceTextField.setText(selectedFolder.getAbsolutePath());
         }
@@ -64,9 +84,29 @@ public class PrimaryController {
         // Show the folder selection dialog
         java.io.File selectedFolder = directoryChooser.showDialog(stage);
 
-        // Update the destinationTextField with the selected folder path (if a folder was selected)
+        // Update the destinationTextField with the selected folder path (if a folder
+        // was selected)
         if (selectedFolder != null) {
             destinationTextField.setText(selectedFolder.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void browseOptionsFolder() {
+        // Open the folder selection dialog for Folder 2
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Select Destination Folder");
+
+        // Get the current stage from any JavaFX node (e.g., the destinationTextField)
+        Stage stage = (Stage) optionsTextField.getScene().getWindow();
+
+        // Show the folder selection dialog
+        java.io.File selectedFolder = directoryChooser.showDialog(stage);
+
+        // Update the destinationTextField with the selected folder path (if a folder
+        // was selected)
+        if (selectedFolder != null) {
+            optionsTextField.setText(selectedFolder.getAbsolutePath());
         }
     }
 
@@ -111,6 +151,7 @@ public class PrimaryController {
 
     @FXML
     private void initialize() {
+
         // Add a listener to the pathpattern TextField to update the preview Label
         // whenever the text changes
         pathpattern.textProperty().addListener(new ChangeListener<String>() {
@@ -119,7 +160,7 @@ public class PrimaryController {
                 updatePathPatternPreview(newText, false);
             }
         });
-    
+
         // Add a listener to the renamepattern TextField to update the preview Label
         // whenever the text changes
         renamepattern.textProperty().addListener(new ChangeListener<String>() {
@@ -128,29 +169,52 @@ public class PrimaryController {
                 updatePathPatternPreview(newText, true);
             }
         });
-    }
-    
 
+        // Set the initial disable state of optionsTextField and optionsBrowseButton
+        optionsTextField.setDisable(!moveFilesCheckbox.isSelected());
+        optionsBrowseButton.setDisable(!moveFilesCheckbox.isSelected());
+
+        // Add a listener to the moveFilesCheckbox to enable/disable the
+        // optionsTextField and optionsBrowseButton based on its state
+        moveFilesCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            optionsTextField.setDisable(!newValue);
+            optionsBrowseButton.setDisable(!newValue);
+        });
+
+        // Add a listener to the moveFilesCheckbox to enable/disable the
+        // optionsTextField based on its state
+        moveFilesCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            optionsTextField.setDisable(!newValue);
+        });
+
+        // Add a listener to the radio buttons to ensure only one can be selected at a
+        // time
+        sameButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                everythingButton.setSelected(false);
+            }
+        });
+
+        everythingButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                sameButton.setSelected(false);
+            }
+        });
+
+    }
 
     private void updatePathPatternPreview(String pathPattern, Boolean isRename) {
         // Replace any placeholders in the path pattern (e.g., %yyyy, %mm, etc.) with a
         // sample value
-        String previewText = pathPattern.replace("%yyyy", "2023")
-                .replace("%yy", "23")
-                .replace("%MA", "Jul")
-                .replace("%M", "July")
-                .replace("%mm", "07")
-                .replace("%DA", "Wed")
-                .replace("%D", "Wednesday")
-                .replace("%dd", "21")
-                .replace("%o", "example.jpg");
+        String previewText = pathPattern.replace("%yyyy", "2023").replace("%yy", "23").replace("%MA", "Jul")
+                .replace("%M", "July").replace("%mm", "07").replace("%DA", "Wed").replace("%D", "Wednesday")
+                .replace("%dd", "21").replace("%o", "example.jpg");
 
-       
-                if (isRename == true){
-                    renamePatternPreview.setText("Rename Preview: " + previewText);
-                } else {
-                    pathPatternPreview.setText("Path Preview: " + previewText);
-                }  
+        if (isRename == true) {
+            renamePatternPreview.setText("Rename Preview: " + previewText);
+        } else {
+            pathPatternPreview.setText("Path Preview: " + previewText);
+        }
     }
 
     @FXML
@@ -159,8 +223,9 @@ public class PrimaryController {
         String destinationFolderPath = destinationTextField.getText();
         String pathPattern = pathpattern.getText();
         String renamePattern = renamepattern.getText();
-    
-        Sorting.sort(sourceFolderPath, destinationFolderPath, pathPattern, renamePattern);
+        String optionsFolderPath = optionsTextField.getText();
+
+        Sorting.sort(sourceFolderPath, destinationFolderPath, optionsFolderPath, pathPattern, renamePattern);
     }
-    
+
 }

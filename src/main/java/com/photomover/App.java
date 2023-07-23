@@ -19,13 +19,18 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
 
         // So this code creates the window and loads the primary.fxml file
-        scene = new Scene(loadFXML("primary"), 600, 450);
+        scene = new Scene(loadFXML("primary2"), 600, 850);
 
         // This sets the title of the window
         stage.setTitle("Photo Mover");
 
         // make the window non-resizable
         stage.setResizable(false);
+
+        // load css file
+        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
+        // scene.getStylesheets().add("styles.css");
+
 
         // This sets the scene to the stage
         stage.setScene(scene);
@@ -40,6 +45,7 @@ public class App extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
     }
+
 
 
 

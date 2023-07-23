@@ -6,10 +6,11 @@ public class Sorting {
         System.out.println("Hello World");
     }
 
-    public static void sort(String sourceFolderPath, String destinationFolderPath, String pathPattern, String renamePattern) {
+    public static void sort(String sourceFolderPath, String destinationFolderPath, String optionsFolderPath,String pathPattern, String renamePattern) {
 
         System.out.println("Source Folder Path: " + sourceFolderPath);
         System.out.println("Destination Folder Path: " + destinationFolderPath);
+        System.out.println("Options Folder Path: " + optionsFolderPath);
         System.out.println("Path Pattern: " + pathPattern);
         System.out.println("Rename Pattern: " + renamePattern);
     }

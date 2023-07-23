@@ -1,0 +1,69 @@
+/* Set the background color of the entire VBox */
+VBox {
+    -fx-background-color: #f2f2f2;
+    -fx-spacing: 10; 
+}
+
+/* Styling for the Labels */
+Label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+/* Styling for the TextFields */
+TextField {
+    -fx-font-size: 14px;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 8;
+}
+
+/* Styling for the Buttons */
+Button {
+    -fx-font-size: 14px;
+    -fx-background-color: #007bff; /* Blue color */
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+}
+
+/* Hover effect for Buttons */
+Button:hover {
+    -fx-background-color: #0056b3; /* Darker shade of blue */
+}
+
+/* Styling for the Path Pattern and Rename Pattern previews */
+#pathPatternPreview, #renamePatternPreview {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666666;
+}
+
+/* Styling for the Start Button */
+#startButton {
+    -fx-font-size: 16px;
+    -fx-background-color: #28a745; /* Green color */
+    -fx-padding: 10 20;
+}
+
+/* Hover effect for Start Button */
+#startButton:hover {
+    -fx-background-color: #1e7e34; /* Darker shade of green */
+}
+
+
+/* Styling for the Options TextField */
+#optionsTextField:disabled {
+    /* Apply a color adjustment to decrease saturation when disabled */
+    -fx-opacity: 0.3; /* Decrease opacity for disabled state */
+}
+
+/* Styling for the Options Browse Button */
+#optionsBrowseButton:disabled {
+    -fx-background-color: #a7a7a7;
+    
+}
+
+/* Make the bold text elements appear bold */
+#step1Label, #step2Label, #step3Label, #step4Label, #step5Label {
+    -fx-font-weight: bold;
+}
+
