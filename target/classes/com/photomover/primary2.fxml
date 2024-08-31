@@ -73,7 +73,7 @@
     </font>
 </Label>
 
-            <Label contentDisplay="TEXT_ONLY" prefHeight="17.0" prefWidth="616.0" text="For example, a folder pattern that goes Year/Month/Day would be %yyyy/%MM/%dd" textAlignment="CENTER" />
+            <Label contentDisplay="TEXT_ONLY" prefHeight="17.0" prefWidth="616.0" text="For example, a folder pattern that goes Year/Month/Day would be %yyyy/%M/%dd" textAlignment="CENTER" />
       
                <VBox spacing="5.0">
                <FlowPane prefHeight="200.0" prefWidth="200.0">

@@ -1,5 +1,6 @@
 package com.photomover;
 
+
 public class Sorting {
     
     public static void main(String[] args) {
@@ -13,5 +14,21 @@ public class Sorting {
         System.out.println("Options Folder Path: " + optionsFolderPath);
         System.out.println("Path Pattern: " + pathPattern);
         System.out.println("Rename Pattern: " + renamePattern);
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

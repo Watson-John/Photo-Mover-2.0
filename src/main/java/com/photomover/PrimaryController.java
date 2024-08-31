@@ -1,7 +1,5 @@
 package com.photomover;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -11,10 +9,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+
 
 public class PrimaryController {
 
@@ -53,18 +55,10 @@ public class PrimaryController {
 
     @FXML
     private void browseSourceFolder() {
-        // Open the folder selection dialog for Folder 1
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Select Source Folder");
-
-        // Get the current stage from any JavaFX node (e.g., the sourceTextField)
         Stage stage = (Stage) sourceTextField.getScene().getWindow();
-
-        // Show the folder selection dialog
         java.io.File selectedFolder = directoryChooser.showDialog(stage);
-
-        // Update the sourceTextField with the selected folder path (if a folder was
-        // selected)
         if (selectedFolder != null) {
             sourceTextField.setText(selectedFolder.getAbsolutePath());
         }
@@ -72,18 +66,10 @@ public class PrimaryController {
 
     @FXML
     private void browseDestinationFolder() {
-        // Open the folder selection dialog for Folder 2
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Select Destination Folder");
-
-        // Get the current stage from any JavaFX node (e.g., the destinationTextField)
         Stage stage = (Stage) destinationTextField.getScene().getWindow();
-
-        // Show the folder selection dialog
         java.io.File selectedFolder = directoryChooser.showDialog(stage);
-
-        // Update the destinationTextField with the selected folder path (if a folder
-        // was selected)
         if (selectedFolder != null) {
             destinationTextField.setText(selectedFolder.getAbsolutePath());
         }
@@ -91,102 +77,101 @@ public class PrimaryController {
 
     @FXML
     private void browseOptionsFolder() {
-        // Open the folder selection dialog for Folder 2
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Select Destination Folder");
-
-        // Get the current stage from any JavaFX node (e.g., the destinationTextField)
         Stage stage = (Stage) optionsTextField.getScene().getWindow();
-
-        // Show the folder selection dialog
         java.io.File selectedFolder = directoryChooser.showDialog(stage);
-
-        // Update the destinationTextField with the selected folder path (if a folder
-        // was selected)
         if (selectedFolder != null) {
             optionsTextField.setText(selectedFolder.getAbsolutePath());
         }
     }
 
-    @FXML
+@SuppressWarnings("unchecked")
+@FXML
     private void guide() {
         // Create a new stage for the path guide popup
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("Path Format Guide");
 
-        // Create the content of the popup window (VBox with labels)
-        VBox popupContent = new VBox();
-        popupContent.setSpacing(10);
-        popupContent.setPadding(new Insets(20));
+        // Create a TableView to display the guide in a structured format
+        TableView<GuideEntry> tableView = new TableView<>();
 
-        Label label1 = new Label("%yyyy - year 4 digit");
-        Label label2 = new Label("%yy - year 2 digit");
-        Label label3 = new Label("%M - month text (e.g., January)");
-        Label label4 = new Label("%MA - month text abbreviated (e.g., Jan)");
-        Label label5 = new Label("%mm - month 2 digit");
-        Label label6 = new Label("%D - day text (e.g., Monday)");
-        Label label7 = new Label("%DA - day text abbreviated (e.g., Mon)");
-        Label label8 = new Label("%dd - day 2 digit");
-        Label label9 = new Label("%o - Original Filename");
+        // Define columns for the TableView
+        TableColumn<GuideEntry, String> placeholderColumn = new TableColumn<>("Placeholder");
+        placeholderColumn.setCellValueFactory(new PropertyValueFactory<>("placeholder"));
+        placeholderColumn.setMinWidth(150);
 
-        popupContent.getChildren().addAll(label1, label2, label3, label4, label5, label6, label7, label8, label9);
+        TableColumn<GuideEntry, String> descriptionColumn = new TableColumn<>("Description");
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        descriptionColumn.setMinWidth(250);
+
+        tableView.getColumns().addAll(placeholderColumn, descriptionColumn);
+
+        // Populate the TableView with data
+        tableView.getItems().add(new GuideEntry("%yyyy", "Year (4 digits)"));
+        tableView.getItems().add(new GuideEntry("%yy", "Year (2 digits)"));
+        tableView.getItems().add(new GuideEntry("%M", "Month (Full name, e.g., January)"));
+        tableView.getItems().add(new GuideEntry("%MA", "Month (Abbreviated, e.g., Jan)"));
+        tableView.getItems().add(new GuideEntry("%mm", "Month (2 digits)"));
+        tableView.getItems().add(new GuideEntry("%D", "Day (Full name, e.g., Monday)"));
+        tableView.getItems().add(new GuideEntry("%DA", "Day (Abbreviated, e.g., Mon)"));
+        tableView.getItems().add(new GuideEntry("%dd", "Day (2 digits)"));
+        tableView.getItems().add(new GuideEntry("%o", "Original Filename"));
+
+        // Create a VBox to hold the TableView and any additional content
+        VBox vBox = new VBox(new Label("Path Format Guide"), tableView);
+        vBox.setPadding(new Insets(20));
+        vBox.setSpacing(10);
 
         // Create a ScrollPane and set its content to the VBox
-        ScrollPane scrollPane = new ScrollPane(popupContent);
+        ScrollPane scrollPane = new ScrollPane(vBox);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
 
-        Scene popupScene = new Scene(scrollPane, 300, 250);
+        Scene popupScene = new Scene(scrollPane, 500, 400);
 
         // Set the scene for the popup stage
         popupStage.setScene(popupScene);
 
-        // Show the popup window and block interactions with other windows until it's
-        // closed
+        // Show the popup window and block interactions with other windows until it's closed
         popupStage.showAndWait();
+    }
+
+    // Inner class to represent a guide entry
+    public static class GuideEntry {
+        private final String placeholder;
+        private final String description;
+
+        public GuideEntry(String placeholder, String description) {
+            this.placeholder = placeholder;
+            this.description = description;
+        }
+
+        public String getPlaceholder() {
+            return placeholder;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
 
     @FXML
     private void initialize() {
 
-        // Add a listener to the pathpattern TextField to update the preview Label
-        // whenever the text changes
-        pathpattern.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldText, String newText) {
-                updatePathPatternPreview(newText, false);
-            }
-        });
+        pathpattern.textProperty().addListener((observableValue, oldText, newText) -> updatePathPatternPreview(newText, false));
 
-        // Add a listener to the renamepattern TextField to update the preview Label
-        // whenever the text changes
-        renamepattern.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldText, String newText) {
-                updatePathPatternPreview(newText, true);
-            }
-        });
+        renamepattern.textProperty().addListener((observableValue, oldText, newText) -> updatePathPatternPreview(newText, true));
 
-        // Set the initial disable state of optionsTextField and optionsBrowseButton
         optionsTextField.setDisable(!moveFilesCheckbox.isSelected());
         optionsBrowseButton.setDisable(!moveFilesCheckbox.isSelected());
 
-        // Add a listener to the moveFilesCheckbox to enable/disable the
-        // optionsTextField and optionsBrowseButton based on its state
         moveFilesCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             optionsTextField.setDisable(!newValue);
             optionsBrowseButton.setDisable(!newValue);
         });
 
-        // Add a listener to the moveFilesCheckbox to enable/disable the
-        // optionsTextField based on its state
-        moveFilesCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            optionsTextField.setDisable(!newValue);
-        });
-
-        // Add a listener to the radio buttons to ensure only one can be selected at a
-        // time
         sameButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 everythingButton.setSelected(false);
@@ -202,13 +187,11 @@ public class PrimaryController {
     }
 
     private void updatePathPatternPreview(String pathPattern, Boolean isRename) {
-        // Replace any placeholders in the path pattern (e.g., %yyyy, %mm, etc.) with a
-        // sample value
         String previewText = pathPattern.replace("%yyyy", "2023").replace("%yy", "23").replace("%MA", "Jul")
                 .replace("%M", "July").replace("%mm", "07").replace("%DA", "Wed").replace("%D", "Wednesday")
                 .replace("%dd", "21").replace("%o", "example.jpg");
 
-        if (isRename == true) {
+        if (isRename) {
             renamePatternPreview.setText("Rename Preview: " + previewText);
         } else {
             pathPatternPreview.setText("Path Preview: " + previewText);
@@ -225,5 +208,4 @@ public class PrimaryController {
 
         Sorting.sort(sourceFolderPath, destinationFolderPath, optionsFolderPath, pathPattern, renamePattern);
     }
-
 }
